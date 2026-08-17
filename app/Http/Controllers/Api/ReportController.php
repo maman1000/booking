@@ -30,14 +30,28 @@ class ReportController extends Controller
             ->pluck('total', 'status');
 
         // Pastikan semua status selalu ada di response dan nilai count di-cast ke int.
-        $bookingsByStatus = collect(['pending' => 0, 'done' => 0, 'batal' => 0])
+        // $bookingsByStatus = collect(['pending' => 0, 'done' => 0, 'batal' => 0])
+        //     ->merge($bookingsByStatus)
+        //     ->map(fn ($total) => (int) $total);
+
+        $bookingsByStatus = collect([
+            'pending' => 0,
+            'confirmed' => 0,
+            'canceled' => 0,
+            'completed' => 0,
+        ])
             ->merge($bookingsByStatus)
             ->map(fn ($total) => (int) $total);
 
         $topServices = Booking::query()
-            ->join('service_schedules', 'bookings.schedule_id', '=', 'service_schedules.id')
-            ->join('services', 'service_schedules.service_id', '=', 'services.id')
-            ->whereIn('bookings.status', ['pending', 'done'])
+            // ->join('service_schedules', 'bookings.schedule_id', '=', 'service_schedules.id')
+            // ->join('services', 'service_schedules.service_id', '=', 'services.id')
+            ->join('services', 'bookings.service_id', '=', 'services.id')
+            ->whereIn('bookings.status', [
+                'pending',
+                'confirmed',
+                'completed',
+            ])
             ->groupBy('services.id', 'services.name')
             ->orderByDesc('total_bookings')
             ->limit(5)
@@ -68,7 +82,7 @@ class ReportController extends Controller
      */
     public function bookings(Request $request): JsonResponse
     {
-        $query = Booking::with(['user', 'schedule.service', 'payment'])
+        $query = Booking::with(['user', 'service', 'payment'])
             ->orderBy('booking_date', 'desc');
 
         if ($request->filled('from')) {

@@ -13,6 +13,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/services', [ServiceController::class, 'index']);
 Route::get('/services/{id}', [ServiceController::class, 'show']);
 Route::get('/services/{id}/schedules', [ScheduleController::class, 'byService']);
+Route::get('/services/{serviceId}/available-slots', [ScheduleController::class, 'availableSlots']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
