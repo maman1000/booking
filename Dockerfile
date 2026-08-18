@@ -10,15 +10,11 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
 
-# Salin composer.json saja (tanpa composer.lock)
 COPY composer.json ./
-
-# Install dependencies, abaikan batasan versi PHP
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-plugins --no-scripts --ignore-platform-req=php
 
-# Salin sisa aplikasi
 COPY . .
 
 EXPOSE 8000
 
-CMD php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
+CMD php artisan serve --host=0.0.0.0 --port=8000
