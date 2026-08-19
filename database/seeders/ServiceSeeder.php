@@ -4,76 +4,62 @@ namespace Database\Seeders;
 
 use App\Models\Service;
 use App\Models\ServiceSchedule;
-use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
 class ServiceSeeder extends Seeder
 {
-    /**
-     * Seed 6 layanan barbershop/salon + 2-3 jadwal per layanan.
-     * Tanggal jadwal H+1..H+7 dari hari ini (Carbon::today()->addDays(n)).
-     */
     public function run(): void
     {
+        // ===== LAPANGAN FUTSAL =====
         $services = [
             [
-                'name' => 'Potong Rambut Premium',
-                'description' => 'Potong rambut dengan stylist berpengalaman, termasuk cuci dan styling.',
-                'price' => 150000,
-                'duration' => 60,
+                'name' => 'Lapangan Futsal A',
+                'description' => 'Lapangan futsal standar internasional dengan lantai kayu dan pencahayaan LED.',
+                'price_per_hour' => 150000,
+                'is_active' => true,
             ],
             [
-                'name' => 'Cukur Jenggot',
-                'description' => 'Perapihan jenggot dengan pisau cukur klasik dan hot towel.',
-                'price' => 50000,
-                'duration' => 30,
+                'name' => 'Lapangan Futsal B',
+                'description' => 'Lapangan futsal dengan tribune penonton dan area parkir luas.',
+                'price_per_hour' => 200000,
+                'is_active' => true,
             ],
             [
-                'name' => 'Hair Spa',
-                'description' => 'Perawatan rambut intensif untuk rambut sehat dan berkilau.',
-                'price' => 200000,
-                'duration' => 90,
+                'name' => 'Lapangan Futsal C',
+                'description' => 'Lapangan futsal premium dengan AC dan ruang ganti eksklusif.',
+                'price_per_hour' => 250000,
+                'is_active' => true,
             ],
             [
-                'name' => 'Creambath',
-                'description' => 'Creambath tradisional dengan pijatan kepala yang menenangkan.',
-                'price' => 120000,
-                'duration' => 75,
-            ],
-            [
-                'name' => 'Manicure',
-                'description' => 'Perawatan kuku tangan lengkap: shaping, cuticle care, dan polish.',
-                'price' => 100000,
-                'duration' => 60,
-            ],
-            [
-                'name' => 'Pedicure',
-                'description' => 'Perawatan kuku kaki lengkap dengan foot soak dan scrub.',
-                'price' => 120000,
-                'duration' => 90,
+                'name' => 'Lapangan Futsal Mini',
+                'description' => 'Lapangan futsal ukuran kecil, cocok untuk latihan dan anak-anak.',
+                'price_per_hour' => 100000,
+                'is_active' => true,
             ],
         ];
 
-        // Slot jam dan hari (H+n) per layanan — 2 sampai 3 jadwal per layanan.
-        $slotTemplates = [
-            [['days' => 1, 'start' => '09:00', 'end' => '10:00'], ['days' => 2, 'start' => '13:00', 'end' => '14:00'], ['days' => 4, 'start' => '16:00', 'end' => '17:00']],
-            [['days' => 1, 'start' => '10:00', 'end' => '10:30'], ['days' => 3, 'start' => '14:00', 'end' => '14:30']],
-            [['days' => 2, 'start' => '09:00', 'end' => '10:30'], ['days' => 5, 'start' => '13:00', 'end' => '14:30'], ['days' => 7, 'start' => '15:00', 'end' => '16:30']],
-            [['days' => 3, 'start' => '10:00', 'end' => '11:15'], ['days' => 6, 'start' => '14:00', 'end' => '15:15']],
-            [['days' => 2, 'start' => '11:00', 'end' => '12:00'], ['days' => 5, 'start' => '10:00', 'end' => '11:00']],
-            [['days' => 4, 'start' => '09:00', 'end' => '10:30'], ['days' => 7, 'start' => '13:00', 'end' => '14:30']],
-        ];
+        // ===== JADWAL OPERASIONAL (day_of_week: 0=Senin, 1=Selasa, ..., 6=Minggu) =====
+        foreach ($services as $serviceData) {
+            $service = Service::create($serviceData);
 
-        foreach ($services as $index => $data) {
-            $service = Service::create(array_merge($data, ['is_active' => true]));
+            // Jadwal untuk setiap hari (Senin-Minggu)
+            $schedules = [
+                ['day_of_week' => 0, 'start_time' => '08:00', 'end_time' => '22:00', 'is_active' => true],
+                ['day_of_week' => 1, 'start_time' => '08:00', 'end_time' => '22:00', 'is_active' => true],
+                ['day_of_week' => 2, 'start_time' => '08:00', 'end_time' => '22:00', 'is_active' => true],
+                ['day_of_week' => 3, 'start_time' => '08:00', 'end_time' => '22:00', 'is_active' => true],
+                ['day_of_week' => 4, 'start_time' => '08:00', 'end_time' => '22:00', 'is_active' => true],
+                ['day_of_week' => 5, 'start_time' => '07:00', 'end_time' => '23:00', 'is_active' => true], // Sabtu
+                ['day_of_week' => 6, 'start_time' => '07:00', 'end_time' => '23:00', 'is_active' => true], // Minggu
+            ];
 
-            foreach ($slotTemplates[$index] as $slot) {
+            foreach ($schedules as $schedule) {
                 ServiceSchedule::create([
                     'service_id' => $service->id,
-                    'date' => Carbon::today()->addDays($slot['days'])->toDateString(),
-                    'start_time' => $slot['start'],
-                    'end_time' => $slot['end'],
-                    'is_available' => true,
+                    'day_of_week' => $schedule['day_of_week'],
+                    'start_time' => $schedule['start_time'],
+                    'end_time' => $schedule['end_time'],
+                    'is_active' => $schedule['is_active'],
                 ]);
             }
         }
