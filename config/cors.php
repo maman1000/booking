@@ -13,7 +13,7 @@ return [
 
     // ⬇️ TAMBAHKAN domain Vercel kamu di sini
     'allowed_origins' => [
-        'https://futsalnow-fe-git-main-maman-darumsman.vercel.app',
+        'https://futsalnow-fe-git-main-maman-darusman.vercel.app',
         // Jika nanti frontend sudah di custom domain, tambahkan juga di sini
     ],
 
