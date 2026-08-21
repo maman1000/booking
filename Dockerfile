@@ -19,6 +19,8 @@ COPY . .
 
 # CMD php artisan serve --host=0.0.0.0 --port=8000
 
-EXPOSE ${PORT:-8000}
-# CMD php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
-CMD sh -c "php artisan config:clear && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"
+# Kembali ke port 8000 (sesuai permintaan Anda)
+EXPOSE 8000
+
+# Hanya config:clear di runtime (tidak butuh database), lalu jalanin serve
+CMD sh -c "php artisan config:clear && php artisan serve --host=0.0.0.0 --port=8000"
