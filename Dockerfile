@@ -14,8 +14,6 @@ COPY composer.json ./
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-plugins --no-scripts --ignore-platform-req=php
 
 COPY . .
-RUN php artisan config:clear
-RUN php artisan cache:clear
 
 # EXPOSE 8000
 
