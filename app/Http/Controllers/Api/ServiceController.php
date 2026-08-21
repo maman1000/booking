@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreServiceRequest;
+use App\Http\Requests\UpdateServiceRequest; // tambahkan use
 use App\Models\Service;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -55,7 +56,7 @@ class ServiceController extends Controller
     /**
      * Ubah layanan (admin) — semua field sometimes.
      */
-    public function update(StoreServiceRequest $request, int $id): JsonResponse
+    public function update(UpdateServiceRequest $request, int $id): JsonResponse
     {
         $service = Service::findOrFail($id);
         $service->update($request->validated());
