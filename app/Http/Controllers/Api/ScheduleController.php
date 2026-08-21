@@ -59,13 +59,29 @@ public function byService(Request $request, int $id): JsonResponse
     /**
      * Semua jadwal + relasi service (admin), urut hari.
      */
-    public function index(): JsonResponse
-    {
-        $schedules = ServiceSchedule::with('service')
-            ->orderBy('day_of_week')
-            ->orderBy('start_time')
-            ->get();
+    // public function index(): JsonResponse
+    // {
+    //     $schedules = ServiceSchedule::with('service')
+    //         ->orderBy('day_of_week')
+    //         ->orderBy('start_time')
+    //         ->get();
 
+    //     return response()->json($schedules);
+    // }
+
+    public function index(Request $request): JsonResponse
+    {
+        $perPage = $request->input('limit', 10);
+        $query = ServiceSchedule::with('service')
+            ->orderBy('day_of_week')
+            ->orderBy('start_time');
+
+        // Tambahkan filter service_id jika ada
+        if ($request->filled('service_id')) {
+            $query->where('service_id', $request->service_id);
+        }
+
+        $schedules = $query->paginate($perPage);
         return response()->json($schedules);
     }
 
@@ -229,5 +245,24 @@ public function byService(Request $request, int $id): JsonResponse
         }
 
         return response()->json($slots);
+    }
+
+    /**
+ * Update jadwal (admin).
+ */
+    public function update(Request $request, int $id): JsonResponse
+    {
+        $validated = $request->validate([
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
+        ]);
+
+        $schedule = ServiceSchedule::findOrFail($id);
+        $schedule->update($validated);
+
+        return response()->json([
+            'message' => 'Jadwal berhasil diperbarui.',
+            'data' => $schedule
+        ]);
     }
 }

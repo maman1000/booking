@@ -29,6 +29,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/services/{id}', [ServiceController::class, 'destroy']);
         Route::get('/schedules', [ScheduleController::class, 'index']);
         Route::post('/schedules', [ScheduleController::class, 'store']);
+        Route::put('/schedules/{id}', [ScheduleController::class, 'update']);
         Route::patch('/schedules/{id}/availability', [ScheduleController::class, 'setAvailability']);
         Route::get('/bookings', [BookingController::class, 'index']);
         Route::patch('/bookings/{id}/status', [BookingController::class, 'updateStatus']);
